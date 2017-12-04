@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>OCF Data</title>
+    </head>
+    <body style="padding:20px">
+
+      <!-- Default multiple charts -->
+      <div class="container-fluid">
+        <div class="row row-eq-height">
+          <div id="graph-container" class="col-md-9 col-lg-10"></div>
+          <div class="col-md-3 col-lg-2">
+		  	<span>Add staff</span>
+			<div>
+				<input id="addStaff" class="selector left" style="background-color:#c9fdc9" type="text">
+				<button onClick="addChart()" class="ui-button ui-corner-all ui-widget right"></button>
+			</div>
+            <span>Remove staff</span>
+			<div>
+				<input id="removeStaff" class="selector left" style="background-color:#ffb2b2" type="text">
+				<button onClick="removeChart()" class="ui-button ui-corner-all ui-widget right"></button>
+			</div>
+          </div>
+        </div>
+      </div>
+    </body>
+	<style>
+	.right {
+		height: 27px;
+		width: 20%;
+		vertical-align: middle;
+	}
+	.left {
+		width: 75%;
+		vertical-align: middle;
+	}
+	</style>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="{{ url_for('static', filename='timeseries.js') }}"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui.css') }}">
+    <script>
+        setChart("{{ user }}");
+    </script>
+</html>
