@@ -33,27 +33,42 @@ function syncExtremes(e) {
   }
 }
 
+function chartContains(user) {
+  for (var i = 0; i < chart1.series.length; i++) {
+    if (chart1.series[i].name === user) {
+      return true;
+    }
+  }
+  return false;
+}
 
-function addChart(user) {
+
+function addChart() {
   user = typeof user !== 'undefined' ? user : $("#addStaff").val();
 
   var chart1 = $("[data-highcharts-chart='0'").highcharts();
   var chart2 = $("[data-highcharts-chart='1'").highcharts();
 
-  var addedStaff = $("#addedStaff");
+  var addStaffDiv = $("#addStaff-form-group");
 
-  for (var i = 0; i < chart1.series.length; i++) {
-    if (chart1.series[i].name === user) {
-      // this data already exists, don't add it
-      return;
-    }
+  if chartContains(user) {
+    // this data already exists, don't add it
+    addStaffDiv.removeClass("has-success");
+    addStaffDiv.addClass("has-warning");
+    return;
   }
 
   $.get("/" + user + "/data/logins_over_time/", function(activity) {
     if (activity.length === 0) {
       // the passed username isn't a staff member
+      addStaffDiv.removeClass("has-success");
+      addStaffDiv.addClass("has-warning");
       return;
     }
+
+    addStaffDiv.removeClass("has-warning");
+    addStaffDiv.addClass("has-success");
+
     var len = chart1.series.length;
     var data1 = activity.datasets[0];
     chart1.addSeries({
@@ -84,7 +99,13 @@ function addChart(user) {
       }
     });
 
-    addedStaff.append(
+    addUserEntry(user);
+    sortUserEntries();
+  });
+};
+
+function addUserEntry(user) {
+  $("#addedStaff").append(
       $("<div>", {
         id: user + '-entry',
         class: "btn-group",
@@ -104,10 +125,24 @@ function addChart(user) {
           },
         })
       )
-    );
+  );
+}
 
+function sortUserEntries() {
+  var userEntries = $("#addedStaff").children("div");
+  userEntries.sort(function(a, b) {
+    var a_id = a.getAttribute("id"),
+        b_id = b.getAttribute("id");
+    if (a_id > b_id) {
+      return 1;
+    } else if (a_id < b_id) {
+      return -1;
+    } else {
+      return 0;
+    }
   });
-};
+  userEntries.detach().appendTo($("#addedStaff"));
+}
 
 function removeChart(user) {
   var chart1 = $("[data-highcharts-chart='0'").highcharts();
