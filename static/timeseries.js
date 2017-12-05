@@ -263,12 +263,20 @@ $(document).ready(function() {
 
   function validate_user() {
     var addStaffDiv = $("#addStaff-form-group");
+    var addStaffFeedback = $("#addStaff-feedback");
     var user = input.val();
-    if (!isStaff(user) || chartContains(user)) {
+    if (!isStaff(user)) {
       addStaffDiv.removeClass("has-success");
-      addStaffDiv.addClass("has-warning");
+      addStaffDiv.addClass("has-error");
+      addStaffFeedback.addClass("invalid-feedback");
+      addStaffFeedback.text("User is not staff.")
+    } else if (chartContains(user)) {
+      addStaffDiv.removeClass("has-success");
+      addStaffDiv.addClass("has-error");
+      addStaffFeedback.addClass("invalid-feedback");
+      addStaffFeedback.text("User is already added.")
     } else {
-      addStaffDiv.removeClass("has-warning");
+      addStaffDiv.removeClass("has-error");
       addStaffDiv.addClass("has-success");
     }
   }
