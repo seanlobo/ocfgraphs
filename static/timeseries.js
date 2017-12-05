@@ -34,6 +34,7 @@ function syncExtremes(e) {
 }
 
 function chartContains(user) {
+  var chart1 = $("[data-highcharts-chart='0'").highcharts();var chart1 = $("[data-highcharts-chart='0'").highcharts();
   for (var i = 0; i < chart1.series.length; i++) {
     if (chart1.series[i].name === user) {
       return true;
@@ -42,33 +43,18 @@ function chartContains(user) {
   return false;
 }
 
+function isStaff(user) {
+  bool = listOfStaff.includes(user);
+  return bool;
+}
 
-function addChart() {
+function addChart(user) {
   user = typeof user !== 'undefined' ? user : $("#addStaff").val();
 
   var chart1 = $("[data-highcharts-chart='0'").highcharts();
   var chart2 = $("[data-highcharts-chart='1'").highcharts();
 
-  var addStaffDiv = $("#addStaff-form-group");
-
-  if chartContains(user) {
-    // this data already exists, don't add it
-    addStaffDiv.removeClass("has-success");
-    addStaffDiv.addClass("has-warning");
-    return;
-  }
-
   $.get("/" + user + "/data/logins_over_time/", function(activity) {
-    if (activity.length === 0) {
-      // the passed username isn't a staff member
-      addStaffDiv.removeClass("has-success");
-      addStaffDiv.addClass("has-warning");
-      return;
-    }
-
-    addStaffDiv.removeClass("has-warning");
-    addStaffDiv.addClass("has-success");
-
     var len = chart1.series.length;
     var data1 = activity.datasets[0];
     chart1.addSeries({
@@ -105,7 +91,7 @@ function addChart() {
 };
 
 function addUserEntry(user) {
-  $("#addedStaff").append(
+  $("#userEntries").append(
       $("<div>", {
         id: user + '-entry',
         class: "btn-group",
@@ -129,8 +115,8 @@ function addUserEntry(user) {
 }
 
 function sortUserEntries() {
-  var userEntries = $("#addedStaff").children("div");
-  userEntries.sort(function(a, b) {
+  var userEntriesSorted = $("#userEntries").children("div");
+  userEntriesSorted.sort(function(a, b) {
     var a_id = a.getAttribute("id"),
         b_id = b.getAttribute("id");
     if (a_id > b_id) {
@@ -141,7 +127,7 @@ function sortUserEntries() {
       return 0;
     }
   });
-  userEntries.detach().appendTo($("#addedStaff"));
+  userEntriesSorted.detach().appendTo($("#userEntries"));
 }
 
 function removeChart(user) {
@@ -258,3 +244,32 @@ function getColor(index) {
 
   return colorList[index % colorList.length];
 }
+
+$(document).ready(function() {
+  var finTypingCountdown = 250; // 250 milliseconds
+  var typingTimer;
+  var input = $('#addStaff');
+
+  // On keyup, start countdown
+  input.keyup(function() {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(validate_user, finTypingCountdown);
+  });
+
+  // On keydown, clear countdown
+  input.keydown(function() {
+    clearTimeout(typingTimer);
+  });
+
+  function validate_user() {
+    var addStaffDiv = $("#addStaff-form-group");
+    var user = input.val();
+    if (!isStaff(user) || chartContains(user)) {
+      addStaffDiv.removeClass("has-success");
+      addStaffDiv.addClass("has-warning");
+    } else {
+      addStaffDiv.removeClass("has-warning");
+      addStaffDiv.addClass("has-success");
+    }
+  }
+});

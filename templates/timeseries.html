@@ -10,27 +10,26 @@
         <div class="row row-eq-height">
           <div id="graph-container" class="col-md-9 col-lg-10"></div>
           <div class="col-md-3 col-lg-2">
-	    <span>Add staff</span>
-	      <div class="form-group has-feedback" id="addStaff-form-group">
+      	    <span>Add staff</span>
+      	      <div class="form-group" id="addStaff-form-group">
                 <input id="addStaff" class="form-control selector left" type="text" style="width:100%"></input>
               </div>
-	      <ul id="addedStaff" class="list-group"></ul>
+      	      <ul id="userEntries" class="list-group"></ul>
           </div>
         </div>
       </div>
     </body>
-	<style>
-	.right {
-		height: 27px;
-		width: 20%;
-		vertical-align: middle;
-	}
-	.left {
-		width: 75%;
-		vertical-align: middle; 
-	}
-	</style>
-
+  	<style>
+  	.right {
+  		height: 27px;
+  		width: 20%;
+  		vertical-align: middle;
+  	}
+  	.left {
+  		width: 75%;
+  		vertical-align: middle;
+  	}
+  	</style>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -39,9 +38,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui.css') }}">
     <script>
-        setChart();
-        {% for user in users %}
-            addChart("{{ user }}");
-        {% endfor %}
+        $(function() {
+          listOfStaff = [
+          {% for s in staff %}
+            "{{s}}",
+          {% endfor %}
+          ];
+
+          setChart();
+          {% for user in users %}
+          addChart("{{ user }}");
+          {% endfor %}
+        });
     </script>
 </html>
