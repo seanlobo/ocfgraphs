@@ -89,8 +89,42 @@ function addChart(user) {
         valueSuffix: ' ' + data2.unit
       }
     });
+
+    sortCharts();
   });
-};
+}
+
+function removeChart(user) {
+  var chart1 = $("[data-highcharts-chart='0'").highcharts();
+  var chart2 = $("[data-highcharts-chart='1'").highcharts();
+
+  for (var i = 0; i < chart1.series.length; i++) {
+    if (chart1.series[i].name === user) {
+      // remove this chart
+      chart1.series[i].remove();
+      chart2.series[i].remove();
+      return;
+    }
+  }
+}
+
+function sortCharts() {
+  function compareChartEntries(a, b) {
+    if (a.name > b.name) {
+      return 1;
+    } else if (a.name < b.name) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+  var chart1 = $("[data-highcharts-chart='0'").highcharts()
+  chart1.series.sort(compareChartEntries);
+  chart1.legend.render(); // Legend refreshes its order a timestep after tooltip and thus needs to be manually re-rendered
+  var chart2 = $("[data-highcharts-chart='1'").highcharts()
+  chart2.series.sort(compareChartEntries);
+  chart2.legend.render(); // Legend refreshes its order a timestep after tooltip and thus needs to be manually re-rendered
+}
 
 function addUserEntry(user) {
   if (isStaff(user) && !chartContains(user)) {
@@ -132,20 +166,6 @@ function sortUserEntries() {
     }
   });
   userEntriesSorted.detach().appendTo($("#userEntries"));
-}
-
-function removeChart(user) {
-  var chart1 = $("[data-highcharts-chart='0'").highcharts();
-  var chart2 = $("[data-highcharts-chart='1'").highcharts();
-
-  for (var i = 0; i < chart1.series.length; i++) {
-    if (chart1.series[i].name === user) {
-      // remove this chart
-      chart1.series[i].remove();
-      chart2.series[i].remove();
-      return;
-    }
-  }
 }
 
 document.getElementById('addStaff').onkeypress = function(e) {
@@ -255,7 +275,7 @@ function getColor(index) {
 function validateUser(user) {
   var addStaffDiv = $("#addStaff-form-group");
   if (!isStaff(user) || chartContains(user)) {
-    addStaffDiv.removeClass("has-success")		 
+    addStaffDiv.removeClass("has-success")
 	       .addClass("has-warning");
   } else {
     addStaffDiv.removeClass("has-warning")
