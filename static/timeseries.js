@@ -44,8 +44,7 @@ function chartContains(user) {
 }
 
 function isStaff(user) {
-  var bool = listOfStaff.includes(user);
-  return bool;
+  return listOfStaff.includes(user);
 }
 
 function addChart(user) {
