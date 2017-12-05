@@ -34,7 +34,7 @@ function syncExtremes(e) {
 }
 
 function chartContains(user) {
-  var chart1 = $("[data-highcharts-chart='0'").highcharts();var chart1 = $("[data-highcharts-chart='0'").highcharts();
+  var chart1 = $("[data-highcharts-chart='0'").highcharts();
   for (var i = 0; i < chart1.series.length; i++) {
     if (chart1.series[i].name === user) {
       return true;
