@@ -33,24 +33,34 @@ function syncExtremes(e) {
   }
 }
 
+function chartContains(user) {
+  var chart1 = $("[data-highcharts-chart='0'").highcharts();
+  for (var i = 0; i < chart1.series.length; i++) {
+    if (chart1.series[i].name === user) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isStaff(user) {
+  return listOfStaff.includes(user);
+}
+
 function addChart(user) {
   user = typeof user !== 'undefined' ? user : $("#addStaff").val();
+
+  if (!isStaff(user) || chartContains(user)) {
+    return;
+  }
+
+  addUserEntry(user);
+  sortUserEntries();
 
   var chart1 = $("[data-highcharts-chart='0'").highcharts();
   var chart2 = $("[data-highcharts-chart='1'").highcharts();
 
-  for (var i = 0; i < chart1.series.length; i++) {
-    if (chart1.series[i].name === user) {
-      // this data already exists, don't add it
-      return;
-    }
-  }
-
   $.get("/" + user + "/data/logins_over_time/", function(activity) {
-    if (activity.length === 0) {
-      // the passed username isn't a staff member
-      return;
-    }
     var len = chart1.series.length;
     var data1 = activity.datasets[0];
     chart1.addSeries({
@@ -66,7 +76,6 @@ function addChart(user) {
       }
     });
 
-
     var data2 = activity.datasets[1];
     chart2.addSeries({
       data: data2.data,
@@ -80,13 +89,52 @@ function addChart(user) {
         valueSuffix: ' ' + data2.unit
       }
     });
-
   });
 };
 
-function removeChart() {
-  var user = $("#removeStaff").val();
+function addUserEntry(user) {
+  if (isStaff(user) && !chartContains(user)) {
+    $("#userEntries").append(
+        $("<div>", {
+          id: user + '-entry',
+          class: "btn-group",
+          role: "group",
+        }).append(
+          $("<li>", {
+            class: "list-group-item",
+            text: user,
+            style: 'padding: 8px; width: 90%;'
+          }),
+          $("<button>", {
+            class: "btn btn-danger",
+            text: "X",
+            click: function() {
+              removeChart(user);
+              $('#' + user + '-entry').remove();
+            },
+          })
+        )
+    );
+  }
+}
 
+function sortUserEntries() {
+  var userEntriesSorted = $("#userEntries").children("div");
+  userEntriesSorted.sort(function(a, b) {
+    var a_id = a.getAttribute("id"),
+        b_id = b.getAttribute("id");
+    if (a_id > b_id) {
+      return 1;
+    } else if (a_id < b_id) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+  userEntriesSorted.detach().appendTo($("#userEntries"));
+}
+
+function removeChart(user) {
   var chart1 = $("[data-highcharts-chart='0'").highcharts();
   var chart2 = $("[data-highcharts-chart='1'").highcharts();
 
@@ -107,16 +155,6 @@ document.getElementById('addStaff').onkeypress = function(e) {
   if (charCode == '13') {
     // Enter pressed
     addChart();
-  }
-}
-
-document.getElementById('removeStaff').onkeypress = function(e) {
-  var event = e || window.event;
-  var charCode = event.which || event.keyCode;
-
-  if (charCode == '13') {
-    // Enter pressed
-    removeChart();
   }
 }
 
@@ -179,6 +217,11 @@ function setChart() {
 
 $.getJSON("/staff_members/", function(staff) {
   $('.selector').autocomplete({
+    select: function(event, ui) {
+      var user = ui.item.value;
+      validateUser(user);
+      addChart(user);
+    },
     source: staff,
     delay: 0,
   });
@@ -207,3 +250,18 @@ function getColor(index) {
 
   return colorList[index % colorList.length];
 }
+
+// Quick validate
+function validateUser(user) {
+  var addStaffDiv = $("#addStaff-form-group");
+  if (!isStaff(user) || chartContains(user)) {
+    addStaffDiv.removeClass("has-success")		 
+	       .addClass("has-warning");
+  } else {
+    addStaffDiv.removeClass("has-warning")
+	       .addClass("has-success");
+  }
+}
+$("#addStaff").on("input", function() {
+  validateUser($("#addStaff").val());
+});
