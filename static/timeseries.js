@@ -33,11 +33,14 @@ function syncExtremes(e) {
   }
 }
 
+
 function addChart(user) {
   user = typeof user !== 'undefined' ? user : $("#addStaff").val();
 
   var chart1 = $("[data-highcharts-chart='0'").highcharts();
   var chart2 = $("[data-highcharts-chart='1'").highcharts();
+
+  var addedStaff = $("#addedStaff");
 
   for (var i = 0; i < chart1.series.length; i++) {
     if (chart1.series[i].name === user) {
@@ -81,12 +84,32 @@ function addChart(user) {
       }
     });
 
+    addedStaff.append(
+      $("<div>", {
+        id: user + '-entry',
+        class: "btn-group",
+        role: "group",
+      }).append(
+        $("<li>", {
+          class: "list-group-item",
+          text: user,
+          style: 'padding: 8px; width: 90%;'
+        }),
+        $("<button>", {
+          class: "btn btn-danger",
+          text: "X",
+          click: function() {
+            removeChart(user);
+            $('#' + user + '-entry').remove();
+          },
+        })
+      )
+    );
+
   });
 };
 
-function removeChart() {
-  var user = $("#removeStaff").val();
-
+function removeChart(user) {
   var chart1 = $("[data-highcharts-chart='0'").highcharts();
   var chart2 = $("[data-highcharts-chart='1'").highcharts();
 
@@ -107,16 +130,6 @@ document.getElementById('addStaff').onkeypress = function(e) {
   if (charCode == '13') {
     // Enter pressed
     addChart();
-  }
-}
-
-document.getElementById('removeStaff').onkeypress = function(e) {
-  var event = e || window.event;
-  var charCode = event.which || event.keyCode;
-
-  if (charCode == '13') {
-    // Enter pressed
-    removeChart();
   }
 }
 
@@ -179,6 +192,9 @@ function setChart() {
 
 $.getJSON("/staff_members/", function(staff) {
   $('.selector').autocomplete({
+    select: function(event, ui) {
+      addChart();
+    },
     source: staff,
     delay: 0,
   });
