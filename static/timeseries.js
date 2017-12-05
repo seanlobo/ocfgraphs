@@ -32,8 +32,8 @@ function syncExtremes(e) {
     }
 }
 
-function addChart() {
-    var user = $("#addStaff").val();
+function addChart(user) {
+    user = typeof user !== 'undefined' ? user : $("#addStaff").val();
 
     var chart1 = $("[data-highcharts-chart='0'").highcharts();
     var chart2 = $("[data-highcharts-chart='1'").highcharts();
@@ -119,74 +119,60 @@ document.getElementById('removeStaff').onkeypress = function(e) {
     }
 }
 
-function setChart(user) {
-    $.getJSON("/" + user + "/data/logins_over_time/", function (activity) {
-       $.each(activity.datasets, function (i, dataset) {
-           $('<div class="chart">')
-               .appendTo('#graph-container')
-               .highcharts({
-                   chart: {
-                       marginLeft: 40, // Keep all charts left aligned
-                       spacingTop: 20,
-                       spacingBottom: 20,
-                       zoomType: 'x'
+function setChart() {
+    for (var i = 0; i < 2; i++) {
+       $('<div class="chart">')
+           .appendTo('#graph-container')
+           .highcharts({
+               chart: {
+                   marginLeft: 40, // Keep all charts left aligned
+                   spacingTop: 20,
+                   spacingBottom: 20,
+                   zoomType: 'x'
+               },
+               title: {
+                   text: i ? 'Daily lab usage in minutes' : 'Cumulative lab usage in minutes',
+                   align: 'left',
+                   margin: 0,
+                   x: 30
+               },
+               credits: {
+                   enabled: false
+               },
+               legend: {
+                   enabled: true
+               },
+               xAxis: {
+                   crosshair: true,
+                   events: {
+                       setExtremes: syncExtremes
                    },
+                   dateTimeLabelFormats: {
+                       second: '%l:%M:%S %p',
+                       minute: '%l:%M %p<br/>%m/%d/%Y',
+                       hour: '%l:%M %p<br/>%m/%d/%Y',
+                       day: '%l:%M %p<br/>%m/%d/%Y',
+                       week: '%l:%M %p<br/>%m/%d/%Y',
+                       month: '%l:%M %p<br/>%m/%d/%Y',
+                       year: '%l:%M %p<br/>%m/%d/%Y'
+                   },
+                   type: 'datetime',
+               },
+               yAxis: {
                    title: {
-                       text: dataset.title,
-                       align: 'left',
-                       margin: 0,
-                       x: 30
-                   },
-                   credits: {
-                       enabled: false
-                   },
-                   legend: {
-                       enabled: true
-                   },
-                   xAxis: {
-                       crosshair: true,
-                       events: {
-                           setExtremes: syncExtremes
-                       },
-                       dateTimeLabelFormats: {
-                           second: '%l:%M:%S %p',
-                           minute: '%l:%M %p<br/>%m/%d/%Y',
-                           hour: '%l:%M %p<br/>%m/%d/%Y',
-                           day: '%l:%M %p<br/>%m/%d/%Y',
-                           week: '%l:%M %p<br/>%m/%d/%Y',
-                           month: '%l:%M %p<br/>%m/%d/%Y',
-                           year: '%l:%M %p<br/>%m/%d/%Y'
-                       },
-                       type: 'datetime',
-                   },
-                   yAxis: {
-                       title: {
-                           text: null
-                       }
-                   },
-                   tooltip: {
-                       shared: true,
-                       enabled: true
-                   },
-                   exporting: {
-                       sourceWidth: 1600,
-                       sourceHeight: 400,
-                   },
-                   series: [{
-                       data: dataset.data,
-                       name: dataset.name,
-                       pointStart: Date.UTC(dataset.year, dataset.month, dataset.day),
-                       pointInterval: 24 * 3600 * 1000,
-                       type: dataset.type,
-                       color: getColor(0),
-                       fillOpacity: 0.3,
-                       tooltip: {
-                           valueSuffix: ' ' + dataset.unit
-                       }
-                   }]
-               });
-        });
-    });
+                       text: null
+                   }
+               },
+               tooltip: {
+                   shared: true,
+                   enabled: true
+               },
+               exporting: {
+                   sourceWidth: 1600,
+                   sourceHeight: 400,
+               },
+           });
+    }
 };
 
 

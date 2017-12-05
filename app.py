@@ -1,3 +1,5 @@
+import json
+
 import flask
 from flask import Flask, render_template, redirect
 from ocflib.account.utils import list_staff
@@ -13,9 +15,13 @@ def root():
     return redirect('/graph/slobo/')
 
 
-@app.route('/graph/<user>/')
-def chart_for_user(user):
-    return render_template('timeseries.html', user=user, staff=staff)
+@app.route('/graph/<users>/')
+def chart_for_user(users):
+    users = [
+        user for user in users.split(',')
+             if user in staff
+    ]
+    return render_template('timeseries.html', users=users, staff=staff)
 
 
 # --------------------------------------------------
