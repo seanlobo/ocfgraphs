@@ -44,12 +44,19 @@ function chartContains(user) {
 }
 
 function isStaff(user) {
-  bool = listOfStaff.includes(user);
+  var bool = listOfStaff.includes(user);
   return bool;
 }
 
 function addChart(user) {
   user = typeof user !== 'undefined' ? user : $("#addStaff").val();
+
+  if (!isStaff(user) || chartContains(user)) {
+    return;
+  }
+
+  addUserEntry(user);
+  sortUserEntries();
 
   var chart1 = $("[data-highcharts-chart='0'").highcharts();
   var chart2 = $("[data-highcharts-chart='1'").highcharts();
@@ -70,7 +77,6 @@ function addChart(user) {
       }
     });
 
-
     var data2 = activity.datasets[1];
     chart2.addSeries({
       data: data2.data,
@@ -84,34 +90,33 @@ function addChart(user) {
         valueSuffix: ' ' + data2.unit
       }
     });
-
-    addUserEntry(user);
-    sortUserEntries();
   });
 };
 
 function addUserEntry(user) {
-  $("#userEntries").append(
-      $("<div>", {
-        id: user + '-entry',
-        class: "btn-group",
-        role: "group",
-      }).append(
-        $("<li>", {
-          class: "list-group-item",
-          text: user,
-          style: 'padding: 8px; width: 90%;'
-        }),
-        $("<button>", {
-          class: "btn btn-danger",
-          text: "X",
-          click: function() {
-            removeChart(user);
-            $('#' + user + '-entry').remove();
-          },
-        })
-      )
-  );
+  if (isStaff(user) && !chartContains(user)) {
+    $("#userEntries").append(
+        $("<div>", {
+          id: user + '-entry',
+          class: "btn-group",
+          role: "group",
+        }).append(
+          $("<li>", {
+            class: "list-group-item",
+            text: user,
+            style: 'padding: 8px; width: 90%;'
+          }),
+          $("<button>", {
+            class: "btn btn-danger",
+            text: "X",
+            click: function() {
+              removeChart(user);
+              $('#' + user + '-entry').remove();
+            },
+          })
+        )
+    );
+  }
 }
 
 function sortUserEntries() {
@@ -263,21 +268,13 @@ $(document).ready(function() {
 
   function validate_user() {
     var addStaffDiv = $("#addStaff-form-group");
-    var addStaffFeedback = $("#addStaff-feedback");
     var user = input.val();
-    if (!isStaff(user)) {
-      addStaffDiv.removeClass("has-success");
-      addStaffDiv.addClass("has-error");
-      addStaffFeedback.addClass("invalid-feedback");
-      addStaffFeedback.text("User is not staff.")
-    } else if (chartContains(user)) {
-      addStaffDiv.removeClass("has-success");
-      addStaffDiv.addClass("has-error");
-      addStaffFeedback.addClass("invalid-feedback");
-      addStaffFeedback.text("User is already added.")
+    if (!isStaff(user) || chartContains(user)) {
+      addStaffDiv.removeClass("has-success")
+		 .addClass("has-warning");
     } else {
-      addStaffDiv.removeClass("has-error");
-      addStaffDiv.addClass("has-success");
+      addStaffDiv.removeClass("has-warning")
+		 .addClass("has-success");
     }
   }
 });

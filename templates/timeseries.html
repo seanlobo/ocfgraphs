@@ -10,29 +10,27 @@
         <div class="row row-eq-height">
           <div id="graph-container" class="col-md-9 col-lg-10"></div>
           <div class="col-md-3 col-lg-2">
-      	    <span>Add staff</span>
-      	      <div class="form-group" id="addStaff-form-group">
-                <input id="addStaff" class="form-control selector left" type="text" style="width:100%"></input>
-                <div id="addStaff-feedback"></div>
-              </div>
-      	      <ul id="userEntries" class="list-group"></ul>
+      	    <div class="form-group has-feedback" id="addStaff-form-group">	    
+              <input id="addStaff" class="form-control selector left" type="text" style="width:100%;" placeholder="Staff Username"></input>
+            </div>
+      	    <ul id="userEntries" class="list-group"></ul>
           </div>
         </div>
       </div>
     </body>
-  	<style>
-  	.right {
-  		height: 27px;
-  		width: 20%;
-  		vertical-align: middle;
-  	}
-  	.left {
-  		width: 75%;
-  		vertical-align: middle;
-  	}
-  	</style>
+    <style>
+      .right {
+  	height: 27px;
+  	width: 20%;
+        vertical-align: middle;
+      }
+      .left {
+  	width: 75%;
+        vertical-align: middle;
+      }
+    </style>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="{{ url_for('static', filename='timeseries.js') }}"></script>
