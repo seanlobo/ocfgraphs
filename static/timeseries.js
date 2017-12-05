@@ -218,7 +218,9 @@ function setChart() {
 $.getJSON("/staff_members/", function(staff) {
   $('.selector').autocomplete({
     select: function(event, ui) {
-      addChart();
+      var user = ui.item.value;
+      validateUser(user);
+      addChart(user);
     },
     source: staff,
     delay: 0,
@@ -249,31 +251,17 @@ function getColor(index) {
   return colorList[index % colorList.length];
 }
 
-$(document).ready(function() {
-  var finTypingCountdown = 250; // 250 milliseconds
-  var typingTimer;
-  var input = $('#addStaff');
-
-  // On keyup, start countdown
-  input.keyup(function() {
-    clearTimeout(typingTimer);
-    typingTimer = setTimeout(validate_user, finTypingCountdown);
-  });
-
-  // On keydown, clear countdown
-  input.keydown(function() {
-    clearTimeout(typingTimer);
-  });
-
-  function validate_user() {
-    var addStaffDiv = $("#addStaff-form-group");
-    var user = input.val();
-    if (!isStaff(user) || chartContains(user)) {
-      addStaffDiv.removeClass("has-success")
-		 .addClass("has-warning");
-    } else {
-      addStaffDiv.removeClass("has-warning")
-		 .addClass("has-success");
-    }
+// Quick validate
+function validateUser(user) {
+  var addStaffDiv = $("#addStaff-form-group");
+  if (!isStaff(user) || chartContains(user)) {
+    addStaffDiv.removeClass("has-success")		 
+	       .addClass("has-warning");
+  } else {
+    addStaffDiv.removeClass("has-warning")
+	       .addClass("has-success");
   }
+}
+$("#addStaff").on("input", function() {
+  validateUser($("#addStaff").val());
 });
