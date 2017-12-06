@@ -55,7 +55,6 @@ function addChart(user) {
   }
 
   addUserEntry(user);
-  sortUserEntries();
 
   var chart1 = $("[data-highcharts-chart='0'").highcharts();
   var chart2 = $("[data-highcharts-chart='1'").highcharts();
@@ -128,27 +127,31 @@ function sortCharts() {
 
 function addUserEntry(user) {
   if (isStaff(user) && !chartContains(user)) {
-    $("#userEntries").append(
-        $("<div>", {
-          id: user + '-entry',
-          class: "btn-group",
-          role: "group",
-        }).append(
-          $("<li>", {
-            class: "list-group-item",
-            text: user,
-            style: 'padding: 8px; width: 90%;'
-          }),
-          $("<button>", {
-            class: "btn btn-danger",
-            text: "X",
-            click: function() {
-              removeChart(user);
-              $('#' + user + '-entry').remove();
-            },
-          })
-        )
+    var $userEntry = $("<div>", {
+      id: user + '-entry',
+      class: "btn-group user-entry",
+      role: "group",
+    }).append(
+      $("<li>", {
+        class: "list-group-item",
+        text: user,
+      }),
+      $("<button>", {
+        class: "btn btn-danger",
+        text: "X",
+        click: function() {
+          removeChart(user);
+          $('#' + user + '-entry').remove();
+        },
+      })
     );
+    $("#userEntries").append($userEntry);
+    sortUserEntries();
+    $userEntry.children('li').effect("highlight", {
+      color: "#5cb85c"
+    }, 2000);
+
+    $('#addStaff').val(''); // Clear username field after successfully adding user
   }
 }
 
@@ -237,10 +240,14 @@ function setChart() {
 
 $.getJSON("/staff_members/", function(staff) {
   $('.selector').autocomplete({
-    select: function(event, ui) {
+    focus: function(event, ui) {
       var user = ui.item.value;
       validateUser(user);
+    },
+    select: function(event, ui) {
+      var user = ui.item.value;
       addChart(user);
+      return false; // So changes to username field persist, specifically if it's cleared
     },
     source: staff,
     delay: 0,
@@ -276,10 +283,10 @@ function validateUser(user) {
   var addStaffDiv = $("#addStaff-form-group");
   if (!isStaff(user) || chartContains(user)) {
     addStaffDiv.removeClass("has-success")
-	       .addClass("has-warning");
+	             .addClass("has-warning");
   } else {
     addStaffDiv.removeClass("has-warning")
-	       .addClass("has-success");
+	             .addClass("has-success");
   }
 }
 $("#addStaff").on("input", function() {
