@@ -20,47 +20,49 @@ def get_data(user):
     cursor.execute(query, (user))
     cleaned = cursor.fetchall()
 
-    if not cleaned:
-        return cleaned
-
-    step = datetime.timedelta(days=1)
-    start_date = cleaned[0]['start'].replace(
-        hour=0, minute=0, second=0, microsecond=0
-    )
-    end_date = datetime.datetime.today().replace(
-        hour=0, minute=0, second=0, microsecond=0
-    )
-    frequency = defaultdict(lambda: 0)
-
-    for row in cleaned:
-        start =row['start']
-        start_0 = start.replace(
+    if cleaned:
+        step = datetime.timedelta(days=1)
+        start_date = cleaned[0]['start'].replace(
             hour=0, minute=0, second=0, microsecond=0
         )
-        end = row['end']
-        end_0 = end.replace(
+        end_date = datetime.datetime.today().replace(
             hour=0, minute=0, second=0, microsecond=0
         )
+        frequency = defaultdict(lambda: 0)
 
-        num_days = (end_0 - start_0).days
-        for day_num in range(num_days + 1):
-            day = start_0 + datetime.timedelta(days=day_num)
+        for row in cleaned:
+            start =row['start']
+            start_0 = start.replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
+            end = row['end']
+            end_0 = end.replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
 
-            effective_start = max(start, day)
-            effective_end   = min(end, day + step)
-            frequency[day] += (effective_end - effective_start).total_seconds() // 60
+            num_days = (end_0 - start_0).days
+            for day_num in range(num_days + 1):
+                day = start_0 + datetime.timedelta(days=day_num)
 
-    # collect tuples
-    cur_date = start_date
-    freqs = []
-    while cur_date <= end_date:
-        freqs.append(frequency[cur_date])
-        ts = cur_date.replace(tzinfo=timezone.utc).timestamp()
-        cur_date += step
+                effective_start = max(start, day)
+                effective_end   = min(end, day + step)
+                frequency[day] += (effective_end - effective_start).total_seconds() // 60
 
-    cumu_freqs = freqs.copy()
-    for i in range(1, len(cumu_freqs)):
-        cumu_freqs[i] += cumu_freqs[i - 1]
+        # collect tuples
+        cur_date = start_date
+        freqs = []
+        while cur_date <= end_date:
+            freqs.append(frequency[cur_date])
+            ts = cur_date.replace(tzinfo=timezone.utc).timestamp()
+            cur_date += step
+
+        cumu_freqs = freqs.copy()
+        for i in range(1, len(cumu_freqs)):
+            cumu_freqs[i] += cumu_freqs[i - 1]
+    else:
+        cumu_freqs = None
+        freqs = None
+        start_date = datetime.datetime.today()
 
     base_data = {
         "name" : user,

@@ -29,7 +29,10 @@ def chart_for_user(users):
 
 @app.route('/<user>/data/logins_over_time/')
 def data_for_user(user):
-    return flask.json.jsonify(utils.get_data(user))
+    if user in staff:
+        return flask.json.jsonify(utils.get_data(user))
+    else:
+        return flask.json.jsonify()
 
 
 @app.route('/staff_members/')
