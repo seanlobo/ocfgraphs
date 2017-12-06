@@ -1,0 +1,27 @@
+/* Elements */
+body {
+  padding: 20px;
+}
+
+/* Classes */
+.left {
+  width: 75%;
+  vertical-align: middle;
+}
+
+.right {
+  height: 27px;
+  width: 20%;
+  vertical-align: middle;
+}
+
+.user-entry li{
+  padding: 8px;
+  width: 90%;
+}
+
+/* IDs */
+#addStaff {
+  border-width: 5px;
+  width: 100%;
+}

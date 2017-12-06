@@ -3,32 +3,20 @@
     <head>
         <title>OCF Data</title>
     </head>
-    <body style="padding:20px">
-
+    <body>
       <!-- Default multiple charts -->
       <div class="container-fluid">
         <div class="row row-eq-height">
           <div id="graph-container" class="col-md-9 col-lg-10"></div>
           <div class="col-md-3 col-lg-2">
       	    <div class="form-group has-feedback" id="addStaff-form-group">
-              <input id="addStaff" class="form-control selector left" type="text" style="border-width: 5px;" placeholder="Staff Username"></input>
+              <input id="addStaff" class="form-control selector left" type="text" placeholder="Staff Username"></input>
             </div>
       	    <ul id="userEntries" class="list-group"></ul>
           </div>
         </div>
       </div>
     </body>
-    <style>
-      .right {
-  	    height: 27px;
-  	    width: 20%;
-        vertical-align: middle;
-      }
-      .left {
-        width: 75%;
-        vertical-align: middle;
-      }
-    </style>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -36,6 +24,7 @@
     <script src="{{ url_for('static', filename='timeseries.js') }}"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui.css') }}">
+    <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
     <script>
         $(function() {
           listOfStaff = [

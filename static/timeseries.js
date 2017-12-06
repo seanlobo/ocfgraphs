@@ -129,13 +129,12 @@ function addUserEntry(user) {
   if (isStaff(user) && !chartContains(user)) {
     var $userEntry = $("<div>", {
       id: user + '-entry',
-      class: "btn-group",
+      class: "btn-group user-entry",
       role: "group",
     }).append(
       $("<li>", {
         class: "list-group-item",
         text: user,
-        style: 'padding: 8px; width: 90%;'
       }),
       $("<button>", {
         class: "btn btn-danger",
@@ -147,11 +146,12 @@ function addUserEntry(user) {
       })
     );
     $("#userEntries").append($userEntry);
-    $('#addStaff').val('');
     sortUserEntries();
     $userEntry.children('li').effect("highlight", {
       color: "#5cb85c"
     }, 2000);
+
+    $('#addStaff').val(''); // Clear username field after successfully adding user
   }
 }
 
