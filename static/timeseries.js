@@ -127,33 +127,31 @@ function sortCharts() {
 
 function addUserEntry(user) {
   if (isStaff(user) && !chartContains(user)) {
-    $userEntry = $("<li>", {
-      class: "list-group-item",
-      text: user,
-      style: 'padding: 8px; width: 90%;'
-    })
-    $("#userEntries").append(
-        $("<div>", {
-          id: user + '-entry',
-          class: "btn-group",
-          role: "group",
-        }).append(
-          $userEntry,
-          $("<button>", {
-            class: "btn btn-danger",
-            text: "X",
-            click: function() {
-              removeChart(user);
-              $('#' + user + '-entry').remove();
-            },
-          })
-        )
+    var $userEntry = $("<div>", {
+      id: user + '-entry',
+      class: "btn-group",
+      role: "group",
+    }).append(
+      $("<li>", {
+        class: "list-group-item",
+        text: user,
+        style: 'padding: 8px; width: 90%;'
+      }),
+      $("<button>", {
+        class: "btn btn-danger",
+        text: "X",
+        click: function() {
+          removeChart(user);
+          $('#' + user + '-entry').remove();
+        },
+      })
     );
+    $("#userEntries").append($userEntry);
     $('#addStaff').val('');
     sortUserEntries();
-    $userEntry.effect("highlight", {
+    $userEntry.children('li').effect("highlight", {
       color: "#5cb85c"
-    }, 1000)
+    }, 2000);
   }
 }
 
