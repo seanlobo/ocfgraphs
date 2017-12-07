@@ -62,13 +62,14 @@ function addChart(user) {
   $.get("/" + user + "/data/logins_over_time/", function(activity) {
     var len = chart1.series.length;
     var data1 = activity.datasets[0];
+    var assignedColor = borrowColor();
     chart1.addSeries({
       data: data1.data,
       name: data1.name,
       pointStart: Date.UTC(data1.year, data1.month, data1.day),
       pointInterval: 24 * 3600 * 1000,
       type: data1.type,
-      color: getColor(len),
+      color: assignedColor,
       fillOpacity: 0.3,
       tooltip: {
         valueSuffix: ' ' + data1.unit
@@ -82,7 +83,7 @@ function addChart(user) {
       pointStart: Date.UTC(data2.year, data2.month, data2.day),
       pointInterval: 24 * 3600 * 1000,
       type: data2.type,
-      color: getColor(len),
+      color: assignedColor,
       fillOpacity: 0.3,
       tooltip: {
         valueSuffix: ' ' + data2.unit
@@ -100,6 +101,7 @@ function removeChart(user) {
   for (var i = 0; i < chart1.series.length; i++) {
     if (chart1.series[i].name === user) {
       // remove this chart
+      returnColor(chart1.series[i].color);
       chart1.series[i].remove();
       chart2.series[i].remove();
       return;
@@ -254,28 +256,25 @@ $.getJSON("/staff_members/", function(staff) {
   });
 });
 
+colorPool = [
+  "#4c4c4c", // dark grey
+  "#e2e2e2", // very light grey/ white
+  "#000000", // Black
+  "#FF8000", // Orange
+  "#800000", // Brown
+  "#FF8080", // Pink
+  "#FF00FF", // Magenta
+  "#00FF00", // Green
+  "#FF0000", // Red
+  "#0000FF", // Blue
+];
 
-function getColor(index) {
-  // Generate unique colors
-  // http://stackoverflow.com/questions/470690/how-to-automatically-generate-n-distinct-colors
+function borrowColor() {
+  return colorPool.pop();
+}
 
-  // below colors are modified Bonynton optomized from: http://jsfiddle.net/k8NC2/1/
-  var colorList = [
-    "#0000FF", // Blue
-    "#FF0000", // Red
-    "#00FF00", // Green
-    "#FF00FF", // Magenta
-    "#FF8080", // Pink
-    "#800000", // Brown
-    "#FF8000", // Orange
-
-
-    "#000000", // Black
-    "#4c4c4c", // dark grey
-    "#e2e2e2", // very light grey/ white
-  ];
-
-  return colorList[index % colorList.length];
+function returnColor(color) {
+  colorPool.push(color);
 }
 
 // Quick validate
