@@ -239,7 +239,6 @@ function setChart() {
   }
 };
 
-
 $.getJSON("/staff_members/", function(staff) {
   $('.selector').autocomplete({
     focus: function(event, ui) {
