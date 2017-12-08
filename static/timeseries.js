@@ -190,6 +190,8 @@ function setChart() {
       .highcharts({
         chart: {
           marginLeft: 40, // Keep all charts left aligned
+          panning: true,
+          panKey: 'shift',
           spacingTop: 20,
           spacingBottom: 20,
           zoomType: 'x'
